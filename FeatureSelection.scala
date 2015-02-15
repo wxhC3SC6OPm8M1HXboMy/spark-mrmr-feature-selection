@@ -6,6 +6,8 @@ package ml
  * Feature selection
  * Currently supported algorithms:
  * Greedy based on information gain and Mimimum-Redundancy Maximum-Relevancy
+ * Each feature must be descretized in buckets which are specified as parameters.
+ * It works only with DenseVector (even though it should not be hard to change it to other Vector types) (this is not cheched even though it is easy to add such a check)
  */
 
 import scala.collection.mutable.MutableList
@@ -15,7 +17,10 @@ import org.apache.spark.mllib.regression.{LabeledPoint}
 import util.BinarySearch
 
 // buckets: ordered values of doubles specifying how values are bucketed; each value must fall into one of the buckets (meaning that the first value must be below the minimum value and the
-// last values above the maximum value; these conditions are not checked)
+//          last values above the maximum value; these conditions are not checked)
+// noRecords: number of input records in rdd (in order to avoid a possibly redundant rdd.count)
+// It returns List of indices of the features (based on the representation in rdd)
+// LabeledPoint features must be DenseVector
 
 class FeatureSelection(rdd:RDD[LabeledPoint],labelBuckets:Array[Double],featuresBuckets:Array[Array[Double]],noRecords:Long) {
 
